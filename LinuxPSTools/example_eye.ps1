@@ -1,11 +1,11 @@
 Set-Location $PSScriptRoot
 
-if (Get-Module -Name PSTools) {
-    Write-Host "Reloading PSTools module..."
-    Remove-Module PSTools
+if (Get-Module -Name LinuxPSTools) {
+    Write-Host "Reloading LinuxPSTools module..."
+    Remove-Module LinuxPSTools
 }
 
-Import-Module .\PSTools.psm1
+Import-Module .\LinuxPSTools.psd1
 
 Clear-TTYDisplay -DeviceName "/dev/ttyUSB0"
 "/dev/ttyUSB0" | Show-TTYDisplayEyeAnimation
