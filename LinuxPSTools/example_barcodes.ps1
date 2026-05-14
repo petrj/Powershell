@@ -4,8 +4,7 @@ if (Get-Module -Name LinuxPSTools) {
     Write-Host "Reloading LinuxPSTools module..."
     Remove-Module LinuxPSTools
 }
-
-Import-Module .\LinuxPSTools.psm1
+Import-Module .\LinuxPSTools.psd1
 
 Clear-TTYDisplay -DeviceName "/dev/ttyUSB0"
 
@@ -28,12 +27,15 @@ while ($true)
         $info = Get-BarcodeInfo -Barcode $barcode
         if ($info.Found)
         {
-            "/dev/ttyUSB0" | Write-TTYDisplayText -Text $info.Name
+	    Clear-TTYDisplay -DeviceName "/dev/ttyUSB0"
+            "/dev/ttyUSB0" | Write-TTYDisplayText -Text ($info.Name + " " + $info.Brand  )
 
             $info
 
             Write-Host "Product found: $($info.Name) by $($info.Brand)"
             Send-ToVoiceGenerator -Text $info.Name -Language "cs"
+    	    Start-Sleep -Seconds 1
+            Send-ToVoiceGenerator -Text $info.Brand -Language "cs"
         }
         else
         {
