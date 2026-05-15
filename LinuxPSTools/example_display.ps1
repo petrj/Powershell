@@ -8,6 +8,19 @@ if (Get-Module -Name LinuxPSTools)
 
 Import-Module .\LinuxPSTools.psd1
 
+function Convert-ToAscii
+{
+    param([string]$Text)
+    if ([string]::IsNullOrEmpty($Text))
+    {
+        return ""
+    }
+
+    $normalized = $Text.Normalize([System.Text.NormalizationForm]::FormD)
+    $withoutDiacritics = $normalized -replace '\p{M}', ''
+    return $withoutDiacritics -replace '[^\x00-\x7F]', ''
+}
+
 Clear-TTYDisplay -DeviceName "/dev/ttyUSB0"
 Write-TTYDisplayText -DeviceName "/dev/ttyUSB0" -Text "Hello, World!" 
 
@@ -54,10 +67,10 @@ while ($true)
         # Parse JSON
         $data = $json | ConvertFrom-Json
 
-        $radioStatus = $data.status
-        $radioFreq = $data.freq
-        $radioName = $data.name
-        $radioText = [string]$data.dynamicLabel
+        $radioStatus = Convert-ToAscii -Text ([string]$data.status)
+        $radioFreq = Convert-ToAscii -Text ([string]$data.freq)
+        $radioName = Convert-ToAscii -Text ([string]$data.name)
+        $radioText = Convert-ToAscii -Text ([string]$data.dynamicLabel)
 
         if ($radioText -ne $LASTRADIOText)
         {
